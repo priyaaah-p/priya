@@ -8,8 +8,10 @@ import streamlit as st
 import torch
 from PIL import Image
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, BlipForConditionalGeneration, BlipProcessor
-#from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+try:
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
+except ImportError:
+    from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
@@ -151,7 +153,7 @@ elif page == "Multimodal":
                 out = model.generate(**inputs, max_new_tokens=40)
                 caption = processor.decode(out[0], skip_special_tokens=True)
                 st.write("Caption:", caption)
-                prompt = f"Image caption: {caption}. Act as a quality analyst and provide issue, impact, and next inspection step."
+                prompt = f"Image caption: {caption}. Act as a medical imaging assistant for educational use. Describe visible patterns and recommend clinical review."
                 st.write(generate(prompt, model_name, cfg))
             except Exception as exc:
                 st.error(f"Multimodal model unavailable: {exc}")
